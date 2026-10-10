@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hanis Rechen-Trainer</title>
+<meta name="description" content="Kopfrechnen üben für die Grundschule (Klasse 3).">
+<meta name="theme-color" content="#3b7dff">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Rechnen">
+<style>
+:root{
+  --bg1:#eaf4ff; --bg2:#eafff3; --card:#ffffff; --ink:#24324a; --muted:#6b7a90;
+  --brand:#3b7dff; --brand-d:#2b63d6; --good:#1faa59; --good-bg:#e4f8ec;
+  --bad:#e5484d; --bad-bg:#fdecec; --focus:#ff8c42; --line:#e4e9f2; --chip:#f1f5fb;
+  --shadow:0 10px 30px rgba(40,70,120,.12);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg1:#131a26; --bg2:#101c17; --card:#1b2432; --ink:#eaf0f8; --muted:#9fb0c6;
+    --brand:#5b94ff; --brand-d:#7aa8ff; --good:#36c977; --good-bg:#16311f;
+    --bad:#ff6b6f; --bad-bg:#3a1a1b; --focus:#ffa65c; --line:#2a3647; --chip:#222d3d;
+    --shadow:0 10px 30px rgba(0,0,0,.4);
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:"Nunito","Segoe UI Rounded","Comic Sans MS",Verdana,system-ui,sans-serif;
+  color:var(--ink);
+  background:linear-gradient(160deg,var(--bg1),var(--bg2));
+  min-height:100%;display:flex;align-items:flex-start;justify-content:center;
+  padding:16px;
+}
+.app{width:100%;max-width:560px}
+.card{background:var(--card);border-radius:22px;box-shadow:var(--shadow);
+  padding:22px;border:1px solid var(--line)}
+h1{font-size:1.5rem;margin:0 0 2px;text-align:center}
+.sub{color:var(--muted);text-align:center;margin:0 0 16px;font-size:.95rem}
+.hidden{display:none !important}
+
+/* start screen */
+.label{font-weight:800;margin:14px 2px 8px;font-size:1rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.topic{position:relative;border:2px solid var(--line);background:var(--chip);
+  border-radius:16px;padding:14px 12px;cursor:pointer;text-align:left;
+  font-size:1rem;font-weight:700;color:var(--ink);transition:.12s;display:flex;
+  align-items:center;gap:10px}
+.topic:hover{transform:translateY(-2px)}
+.topic.sel{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 12%,var(--card))}
+.topic .ic{font-size:1.4rem}
+.topic.big{grid-column:1 / -1;justify-content:center;font-size:1.15rem;
+  background:color-mix(in srgb,var(--brand) 10%,var(--card));border-color:var(--brand)}
+.badge{position:absolute;top:-9px;right:8px;background:var(--focus);color:#fff;
+  font-size:.62rem;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.3px}
+.segrow{display:flex;gap:8px;flex-wrap:wrap}
+.seg{flex:1;min-width:70px;border:2px solid var(--line);background:var(--chip);
+  border-radius:14px;padding:10px;font-weight:800;cursor:pointer;color:var(--ink);font-size:1rem}
+.seg.sel{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 14%,var(--card))}
+.btn{display:block;width:100%;margin-top:18px;border:none;border-radius:16px;
+  background:var(--brand);color:#fff;font-size:1.2rem;font-weight:800;padding:15px;
+  cursor:pointer;box-shadow:0 6px 16px rgba(59,125,255,.35);transition:.12s}
+.btn:hover{background:var(--brand-d)}
+.btn.ghost{background:var(--chip);color:var(--ink);box-shadow:none;border:2px solid var(--line)}
+
+/* quiz */
+.hud{display:flex;justify-content:space-between;align-items:center;gap:8px;
+  font-weight:800;color:var(--muted);font-size:.9rem;margin-bottom:10px}
+.hud .pill{background:var(--chip);border-radius:20px;padding:5px 11px}
+.bar{height:10px;background:var(--chip);border-radius:20px;overflow:hidden;margin-bottom:18px}
+.bar>i{display:block;height:100%;width:0;background:var(--brand);transition:.3s}
+.task{font-size:2.6rem;font-weight:800;text-align:center;letter-spacing:.5px;
+  margin:10px 0 4px;line-height:1.2}
+.answerrow{display:flex;gap:10px;justify-content:center;align-items:center;margin:14px 0}
+input.ans{width:130px;font-size:2rem;font-weight:800;text-align:center;padding:10px;
+  border:3px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);
+  outline:none}
+input.ans:focus{border-color:var(--brand)}
+input.ans.small{width:84px}
+.rlabel{font-size:1.6rem;font-weight:800;color:var(--muted)}
+.feedback{min-height:30px;text-align:center;font-size:1.25rem;font-weight:800;margin:6px 0}
+.feedback.good{color:var(--good)}
+.feedback.bad{color:var(--bad)}
+.tiprow{text-align:center;margin-top:6px}
+.tipbtn{background:none;border:none;color:var(--brand);font-weight:800;cursor:pointer;font-size:.95rem}
+.tip{background:#fff7ef;border:1px dashed var(--focus);color:#8a4b12;border-radius:14px;
+  padding:10px 12px;margin-top:8px;font-size:.92rem;line-height:1.4}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tip{background:#2a2015;color:#ffcf9e}}
+
+/* result */
+.stars{font-size:2.6rem;text-align:center;margin:4px 0}
+.big-score{font-size:3rem;font-weight:800;text-align:center;margin:6px 0 2px}
+.res-sub{text-align:center;color:var(--muted);margin-bottom:12px}
+.misslist{background:var(--chip);border-radius:14px;padding:10px 14px;margin-top:8px;font-size:.95rem}
+.misslist h3{margin:0 0 6px;font-size:.95rem}
+.misslist div{padding:3px 0;border-bottom:1px solid var(--line)}
+.misslist div:last-child{border:none}
+.footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- START -->
+  <section id="screen-start" class="card">
+    <h1>🧮 Hanis Rechen-Trainer</h1>
+    <p class="sub">Kopfrechnen üben – Schritt für Schritt</p>
+
+    <div class="label">Was möchtest du üben?</div>
+    <div class="grid" id="topics"></div>
+
+    <div class="label">Wie viele Aufgaben?</div>
+    <div class="segrow" id="counts"></div>
+
+    <button class="btn" id="startBtn">Los geht's! 🚀</button>
+    <div class="footer" id="bestline"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="screen-quiz" class="card hidden">
+    <div class="hud">
+      <span class="pill" id="hudProg">Aufgabe 1</span>
+      <span class="pill" id="hudScore">✅ 0</span>
+      <span class="pill" id="hudStreak">🔥 0</span>
+      <span class="pill" id="hudTime">0:00</span>
+    </div>
+    <div class="bar"><i id="barFill"></i></div>
+
+    <div class="task" id="taskText">7 + 8 =</div>
+    <div class="answerrow" id="answerRow"></div>
+    <div class="feedback" id="feedback"></div>
+
+    <button class="btn" id="checkBtn">Prüfen</button>
+    <div class="tiprow">
+      <button class="tipbtn" id="tipBtn">💡 Tipp anzeigen</button>
+      <div class="tip hidden" id="tipBox"></div>
+    </div>
+    <button class="btn ghost" id="quitBtn" style="margin-top:12px">Abbrechen</button>
+  </section>
+
+  <!-- RESULT -->
+  <section id="screen-result" class="card hidden">
+    <h1>Geschafft! 🎉</h1>
+    <div class="stars" id="resStars">⭐⭐⭐</div>
+    <div class="big-score" id="resScore">0 / 0</div>
+    <div class="res-sub" id="resSub"></div>
+    <div class="misslist hidden" id="missBox"></div>
+    <button class="btn" id="againBtn">Nochmal üben 🔁</button>
+    <button class="btn ghost" id="homeBtn" style="margin-top:10px">Anderes Thema</button>
+  </section>
+
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const ones=n=>n%10;
+
+const CATS={
+  mix:{name:'Gemischt',icon:'⭐',big:true},
+  plus:{name:'Plus',icon:'➕'},
+  minus:{name:'Minus',icon:'➖',focus:true},
+  ergaenze:{name:'Ergänzen',icon:'🔍',focus:true},
+  mal:{name:'Einmaleins',icon:'✖️'},
+  geteilt:{name:'Geteilt',icon:'➗'},
+  rest:{name:'Mit Rest',icon:'🧩'},
+  vh:{name:'Verd. & Halb.',icon:'🔁'},
+};
+const HINTS={
+  plus:'Erst bis zum nächsten Zehner, dann weiter. 28 + 17: 28 + 2 = 30, dann + 15 = 45.',
+  minus:'Erst zum glatten Zehner, dann weiter. 82 − 67: 82 − 2 = 80, − 60 = 20, − 5 = 15.',
+  ergaenze:'Zähle vom kleineren Wert hoch bis zur Zielzahl. Was fehlt?',
+  mal:'Denk an die Malreihe. Tausch die Zahlen, wenn es leichter ist (8·3 = 3·8).',
+  geteilt:'Frag dich: Wie oft passt die Zahl hinein? Denk ans Einmaleins.',
+  rest:'Wie oft passt es GANZ hinein? Was übrig bleibt, ist der Rest.',
+  vh:'Halbieren: erst die Zehner, dann die Einer halbieren, dann plus. 38 → 15 + 4 = 19. '+
+     'Verdoppeln: Zehner und Einer verdoppeln.',
+};
+const PRAISE=['Super!','Klasse!','Toll!','Weiter so!','Prima!','Spitze!','Stark!'];
+
+/* ---------- generators (same rules as the daily sheet) ---------- */
+function gPlus(){let a,b;do{a=ri(14,69);b=ri(13,39);}while(!(a+b<=100&&ones(a)+ones(b)>=10));
+  return{text:`${a} + ${b} =`,ans:a+b,cat:'plus'};}
+function gMinus(){let a,b;do{a=ri(41,100);b=ri(13,a-10);}while(!(ones(a)<ones(b)));
+  return{text:`${a} − ${b} =`,ans:a-b,cat:'minus'};}
+function gErg(){const f=ri(0,2);
+  if(f===0){let a,c;do{a=ri(18,55);c=ri(a+8,99);}while(!(ones(a)+ones(c-a)>=10));
+    return{text:`${a} + ⬚ = ${c}`,ans:c-a,cat:'ergaenze'};}
+  if(f===1){let a,c;do{a=ri(50,99);c=ri(12,a-12);}while(!(ones(a)<ones(c)));
+    return{text:`${a} − ⬚ = ${c}`,ans:a-c,cat:'ergaenze'};}
+  let b,c;do{b=ri(14,39);c=ri(22,58);}while(!(b+c<=100&&ones(b)+ones(c)>=10));
+  return{text:`⬚ − ${b} = ${c}`,ans:b+c,cat:'ergaenze'};}
+function gMal(){const a=ri(2,10),b=ri(2,10);return{text:`${a} · ${b} =`,ans:a*b,cat:'mal'};}
+function gGet(){let q,d,dd;do{q=ri(2,10);d=ri(2,9);dd=q*d;}while(dd>90);
+  return{text:`${dd} : ${d} =`,ans:q,cat:'geteilt'};}
+function gRest(){let d,q,r,dd;do{d=ri(3,8);q=ri(2,9);r=ri(1,d-1);dd=q*d+r;}while(dd>80);
+  return{text:`${dd} : ${d} =`,ans:{q,r},type:'rest',cat:'rest'};}
+function gVH(){if(Math.random()<0.5){const x=ri(12,40);return{text:`Verdopple ${x}`,ans:2*x,cat:'vh'};}
+  const x=ri(12,40)*2;return{text:`Halbiere ${x}`,ans:x/2,cat:'vh'};}
+const GEN={plus:gPlus,minus:gMinus,ergaenze:gErg,mal:gMal,geteilt:gGet,rest:gRest,vh:gVH};
+const MIXBAG=['minus','minus','minus','ergaenze','ergaenze','ergaenze','plus','plus',
+  'mal','mal','geteilt','geteilt','vh','rest'];
+function genOne(cat){
+  const key=(cat==='mix')?MIXBAG[ri(0,MIXBAG.length-1)]:cat;
+  return GEN[key]();
+}
+
+/* ---------- state ---------- */
+let S={cat:'mix',count:20,i:0,correct:0,streak:0,best:0,t0:0,timer:null,
+  list:[],cur:null,misses:[],locked:false};
+
+/* ---------- start screen ---------- */
+function buildStart(){
+  const t=$('#topics');t.innerHTML='';
+  for(const [k,c] of Object.entries(CATS)){
+    const b=document.createElement('button');
+    b.className='topic'+(c.big?' big':'')+(k===S.cat?' sel':'');
+    b.innerHTML=(c.focus?'<span class="badge">Üben!</span>':'')+
+      `<span class="ic">${c.icon}</span>${c.name}`;
+    b.onclick=()=>{S.cat=k;buildStart();};
+    t.appendChild(b);
+  }
+  const cs=$('#counts');cs.innerHTML='';
+  [10,20,30].forEach(n=>{
+    const b=document.createElement('button');
+    b.className='seg'+(n===S.count?' sel':'');
+    b.textContent=n+' Aufgaben';
+    b.onclick=()=>{S.count=n;buildStart();};
+    cs.appendChild(b);
+  });
+  const best=loadBest();
+  $('#bestline').textContent=best?`Bester Lauf: ${best.correct}/${best.count} `+
+    `(${best.cat}) · längste Serie 🔥${best.streak}`:'Noch kein Ergebnis gespeichert.';
+}
+
+/* ---------- quiz ---------- */
+function show(id){['start','quiz','result'].forEach(s=>$('#screen-'+s).classList.add('hidden'));
+  $('#screen-'+id).classList.remove('hidden');}
+
+function startQuiz(){
+  S.i=0;S.correct=0;S.streak=0;S.best=0;S.misses=[];S.locked=false;
+  S.list=Array.from({length:S.count},()=>genOne(S.cat));
+  S.t0=Date.now();
+  clearInterval(S.timer);
+  S.timer=setInterval(updTime,1000);
+  show('quiz');
+  loadTask();
+}
+function updTime(){const s=Math.floor((Date.now()-S.t0)/1000);
+  $('#hudTime').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+
+function loadTask(){
+  S.locked=false;
+  S.cur=S.list[S.i];
+  $('#taskText').textContent=S.cur.text;
+  $('#feedback').textContent='';$('#feedback').className='feedback';
+  $('#tipBox').classList.add('hidden');
+  $('#checkBtn').textContent='Prüfen';
+  const row=$('#answerRow');row.innerHTML='';
+  if(S.cur.type==='rest'){
+    row.innerHTML=`<input class="ans small" id="a1" inputmode="numeric" autocomplete="off">`+
+      `<span class="rlabel">Rest</span>`+
+      `<input class="ans small" id="a2" inputmode="numeric" autocomplete="off">`;
+  }else{
+    row.innerHTML=`<span class="rlabel">=</span>`+
+      `<input class="ans" id="a1" inputmode="numeric" autocomplete="off">`;
+  }
+  $('#hudProg').textContent=`Aufgabe ${S.i+1} / ${S.count}`;
+  $('#hudScore').textContent=`✅ ${S.correct}`;
+  $('#hudStreak').textContent=`🔥 ${S.streak}`;
+  $('#barFill').style.width=(S.i/S.count*100)+'%';
+  setTimeout(()=>$('#a1')&&$('#a1').focus(),30);
+}
+
+function check(){
+  if(S.locked){next();return;}
+  const cur=S.cur;let ok,correctText;
+  if(cur.type==='rest'){
+    const q=parseInt($('#a1').value,10),r=parseInt($('#a2').value,10);
+    if(Number.isNaN(q)||Number.isNaN(r))return;
+    ok=(q===cur.ans.q&&r===cur.ans.r);correctText=`${cur.ans.q} Rest ${cur.ans.r}`;
+  }else{
+    const v=parseInt($('#a1').value,10);
+    if(Number.isNaN(v))return;
+    ok=(v===cur.ans);correctText=cur.ans;
+  }
+  const fb=$('#feedback');
+  if(ok){
+    S.correct++;S.streak++;S.best=Math.max(S.best,S.streak);
+    fb.textContent='✓ '+PRAISE[ri(0,PRAISE.length-1)];fb.className='feedback good';
+    $('#hudScore').textContent=`✅ ${S.correct}`;$('#hudStreak').textContent=`🔥 ${S.streak}`;
+    S.locked=true;setTimeout(next,750);
+  }else{
+    S.streak=0;$('#hudStreak').textContent='🔥 0';
+    fb.innerHTML=`✗ Richtig ist: <b>${correctText}</b>`;fb.className='feedback bad';
+    S.misses.push(`${cur.text.replace('⬚','___')} ${correctText}`);
+    S.locked=true;$('#checkBtn').textContent='Weiter ▶';
+  }
+}
+function next(){
+  S.i++;
+  if(S.i>=S.count){finish();return;}
+  loadTask();
+}
+function finish(){
+  clearInterval(S.timer);
+  const secs=Math.floor((Date.now()-S.t0)/1000);
+  const pct=S.correct/S.count;
+  const stars=pct>=0.9?'⭐⭐⭐':pct>=0.6?'⭐⭐':pct>=0.3?'⭐':'💪';
+  $('#resStars').textContent=stars;
+  $('#resScore').textContent=`${S.correct} / ${S.count} richtig`;
+  $('#resSub').textContent=`Zeit: ${Math.floor(secs/60)}:${String(secs%60).padStart(2,'0')} min · `+
+    `längste Serie 🔥${S.best}`;
+  const mb=$('#missBox');
+  if(S.misses.length){
+    mb.classList.remove('hidden');
+    mb.innerHTML='<h3>Das üben wir nochmal:</h3>'+S.misses.map(m=>`<div>${m}</div>`).join('');
+  }else{mb.classList.add('hidden');}
+  saveBest();
+  show('result');
+}
+
+/* ---------- storage ---------- */
+function loadBest(){try{return JSON.parse(localStorage.getItem('hani_best')||'null');}catch(e){return null;}}
+function saveBest(){
+  try{
+    const prev=loadBest();
+    const cur={correct:S.correct,count:S.count,streak:S.best,cat:CATS[S.cat].name};
+    if(!prev||S.correct>prev.correct||(S.correct===prev.correct&&S.best>prev.streak))
+      localStorage.setItem('hani_best',JSON.stringify(cur));
+  }catch(e){}
+}
+
+/* ---------- wire up ---------- */
+$('#startBtn').onclick=startQuiz;
+$('#checkBtn').onclick=check;
+$('#quitBtn').onclick=()=>{clearInterval(S.timer);buildStart();show('start');};
+$('#againBtn').onclick=startQuiz;
+$('#homeBtn').onclick=()=>{buildStart();show('start');};
+$('#tipBtn').onclick=()=>{const t=$('#tipBox');t.textContent=HINTS[S.cur.cat]||'';t.classList.toggle('hidden');};
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!$('#screen-quiz').classList.contains('hidden')){e.preventDefault();check();}
+});
+buildStart();show('start');
+
+/* PWA: register the service worker (works over http/https, not file://) */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
