@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hanis Rechen-Trainer</title>
-<meta name="description" content="Kopfrechnen üben für die Grundschule (Klasse 3).">
+<title>RapidKopf – Kopfrechnen üben</title>
+<meta name="description" content="RapidKopf: Kopfrechnen üben für die Grundschule (Klasse 3).">
 <meta name="theme-color" content="#3b7dff">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Rechnen">
+<meta name="apple-mobile-web-app-title" content="RapidKopf">
 <style>
 :root{
   --bg1:#eaf4ff; --bg2:#eafff3; --card:#ffffff; --ink:#24324a; --muted:#6b7a90;
@@ -106,7 +106,7 @@ input.ans.small{width:84px}
 
   <!-- START -->
   <section id="screen-start" class="card">
-    <h1>🧮 Hanis Rechen-Trainer</h1>
+    <h1>🧮 RapidKopf</h1>
     <p class="sub">Kopfrechnen üben – Schritt für Schritt</p>
 
     <div class="label">Was möchtest du üben?</div>
@@ -324,13 +324,13 @@ function finish(){
 }
 
 /* ---------- storage ---------- */
-function loadBest(){try{return JSON.parse(localStorage.getItem('hani_best')||'null');}catch(e){return null;}}
+function loadBest(){try{return JSON.parse(localStorage.getItem('rapidkopf_best')||'null');}catch(e){return null;}}
 function saveBest(){
   try{
     const prev=loadBest();
     const cur={correct:S.correct,count:S.count,streak:S.best,cat:CATS[S.cat].name};
     if(!prev||S.correct>prev.correct||(S.correct===prev.correct&&S.best>prev.streak))
-      localStorage.setItem('hani_best',JSON.stringify(cur));
+      localStorage.setItem('rapidkopf_best',JSON.stringify(cur));
   }catch(e){}
 }
 

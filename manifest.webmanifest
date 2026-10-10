@@ -1,7 +1,7 @@
 {
-  "name": "Hanis Rechen-Trainer",
-  "short_name": "Rechnen",
-  "description": "Kopfrechnen üben für die Grundschule (Klasse 3) – Plus, Minus, Einmaleins, Teilen und mehr.",
+  "name": "RapidKopf",
+  "short_name": "RapidKopf",
+  "description": "RapidKopf – Kopfrechnen üben für die Grundschule (Klasse 3): Plus, Minus, Einmaleins, Teilen und mehr.",
   "lang": "de",
   "dir": "ltr",
   "start_url": "./index.html",
