@@ -1,6 +1,6 @@
 /* Service Worker – offline cache for Hanis Rechen-Trainer.
    Bump CACHE when you change app files so clients fetch the new version. */
-const CACHE = 'rapidkopf-v2';
+const CACHE = 'rapidkopf-v3';
 const ASSETS = [
   './',
   './index.html',
